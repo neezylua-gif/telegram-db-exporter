@@ -30,8 +30,8 @@ telethon.utils = types.SimpleNamespace(
 errors = types.ModuleType("telethon.errors")
 errors.RPCError = DummyRPCError
 errors.FloodWaitError = DummyFloodWaitError
-sys.modules.setdefault("telethon", telethon)
-sys.modules.setdefault("telethon.errors", errors)
+sys.modules["telethon"] = telethon
+sys.modules["telethon.errors"] = errors
 
 from tg_parser.config import Settings
 from tg_parser.db import ArchiveDatabase
