@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telegram-parser-pro"
+dynamic = ["version"]
+description = "Асинхронный архиватор Telegram на Telethon с SQLite и восстановлением загрузок"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "Telethon==1.44.0",
+  "python-dotenv==1.2.2",
+]
+
+[project.optional-dependencies]
+speed = ["cryptg==0.6.0"]
+dev = [
+  "ruff>=0.12,<1",
+]
+
+[project.scripts]
+tgparse = "tg_parser.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["tg_parser*"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tg_parser.__version__"}
