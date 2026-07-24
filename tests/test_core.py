@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from types import SimpleNamespace
 
 from tg_parser.parser import ParseOptions, build_message_bundle, detect_media_type
@@ -27,7 +27,7 @@ def test_message_bundle_extracts_complete_core_fields():
     sender = SimpleNamespace(first_name="Иван", last_name="Иванов", username="ivan")
     message = FakeTL(
         id=42,
-        date=datetime(2026, 1, 2, tzinfo=timezone.utc),
+        date=datetime(2026, 1, 2, tzinfo=UTC),
         edit_date=None,
         sender_id=7,
         sender=sender,

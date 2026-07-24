@@ -9,7 +9,8 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from telethon import TelegramClient, utils as telethon_utils
+from telethon import TelegramClient
+from telethon import utils as telethon_utils
 from telethon.errors import FloodWaitError, RPCError
 
 from .config import Settings
@@ -60,7 +61,7 @@ class ParseStats:
     links: int = 0
     errors: int = 0
 
-    def merge(self, other: "ParseStats") -> None:
+    def merge(self, other: ParseStats) -> None:
         for item in fields(self):
             setattr(self, item.name, getattr(self, item.name) + getattr(other, item.name))
 
@@ -274,7 +275,7 @@ class TelegramArchiveParser:
         self._queued_media: set[tuple[int, int]] = set()
         self._queue_lock = asyncio.Lock()
 
-    async def __aenter__(self) -> "TelegramArchiveParser":
+    async def __aenter__(self) -> TelegramArchiveParser:
         if self.settings.phone:
             await self.client.start(phone=self.settings.phone)
         else:
@@ -707,9 +708,9 @@ class TelegramArchiveParser:
 
             actual_size = await asyncio.to_thread(lambda: downloaded_path.stat().st_size)
             if actual_size <= 0:
-                raise IOError("Telethon создал пустой файл")
+                raise OSError("Telethon создал пустой файл")
             if job.file_size is not None and actual_size != job.file_size:
-                raise IOError(
+                raise OSError(
                     f"Размер не совпал: ожидалось {job.file_size}, получено {actual_size}"
                 )
             if max_bytes and actual_size > max_bytes:

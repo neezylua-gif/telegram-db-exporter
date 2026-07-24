@@ -5,10 +5,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from helpers import chat_record, message_record
+
 from tg_parser.db import ArchiveDatabase
 from tg_parser.exporter import export_messages
-
-from helpers import chat_record, message_record
 
 
 class ExporterTests(unittest.IsolatedAsyncioTestCase):

@@ -7,7 +7,6 @@ import os
 import sqlite3
 import tempfile
 from pathlib import Path
-from contextlib import suppress
 from typing import Any
 
 from .db import ArchiveDatabase
@@ -24,13 +23,16 @@ def _excel_safe(value: Any) -> Any:
 def _validate_output_path(database_path: Path, output: Path) -> tuple[Path, Path]:
     database_resolved = database_path.expanduser().resolve()
     output_resolved = output.expanduser().resolve()
+
     protected = {
         database_resolved,
         Path(str(database_resolved) + "-wal"),
         Path(str(database_resolved) + "-shm"),
     }
     if output_resolved in protected:
-        raise ValueError("Файл экспорта не может совпадать с SQLite-базой или её WAL/SHM")
+        raise ValueError(
+            "Файл экспорта не может совпадать с SQLite-базой или её WAL/SHM"
+        )
     return database_resolved, output_resolved
 
 
@@ -49,6 +51,7 @@ def _export_sync(
 
     where = "WHERE m.chat_id = ?" if chat_id is not None else ""
     params = (chat_id,) if chat_id is not None else ()
+
     query = f"""
         SELECT
             m.chat_id, c.title AS chat_title, c.username AS chat_username,
@@ -71,7 +74,7 @@ def _export_sync(
         connection.execute("PRAGMA query_only=ON")
         cursor = connection.execute(query, params)
 
-        handle = tempfile.NamedTemporaryFile(
+        handle = tempfile.NamedTemporaryFile(  # noqa: SIM115
             mode="w",
             encoding="utf-8" if export_format == "jsonl" else "utf-8-sig",
             newline="" if export_format == "csv" else None,
@@ -82,14 +85,18 @@ def _export_sync(
         )
         temp_path = Path(handle.name)
         count = 0
+
         with handle:
             if export_format == "jsonl":
                 for row in cursor:
                     item = dict(row)
                     for key in ("reactions_json", "raw_json"):
                         if item.get(key):
-                            with suppress(json.JSONDecodeError):
-    item[key] = json.loads(item[key])
+                            try:  # noqa: SIM105
+                                item[key] = json.loads(item[key])
+                            except json.JSONDecodeError:
+                                pass
+
                     handle.write(json.dumps(item, ensure_ascii=False) + "\n")
                     count += 1
             else:
@@ -97,13 +104,20 @@ def _export_sync(
                 for row in cursor:
                     item = dict(row)
                     item.pop("raw_json", None)
+
                     if not raw_csv:
-                        item = {key: _excel_safe(value) for key, value in item.items()}
+                        item = {
+                            key: _excel_safe(value)
+                            for key, value in item.items()
+                        }
+
                     if writer is None:
                         writer = csv.DictWriter(handle, fieldnames=list(item))
                         writer.writeheader()
+
                     writer.writerow(item)
                     count += 1
+
             handle.flush()
             os.fsync(handle.fileno())
 

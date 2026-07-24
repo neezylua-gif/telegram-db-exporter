@@ -54,7 +54,7 @@ class StorageSettings:
         return self.output_dir / "media"
 
     @classmethod
-    def from_env(cls, env_file: str | Path | None = None) -> "StorageSettings":
+    def from_env(cls, env_file: str | Path | None = None) -> StorageSettings:
         _load_environment(env_file)
         output_raw = os.getenv("TG_OUTPUT_DIR", "parser_data").strip()
         if not output_raw:
@@ -89,7 +89,7 @@ class Settings:
         return self.output_dir / "media"
 
     @classmethod
-    def from_env(cls, env_file: str | Path | None = None) -> "Settings":
+    def from_env(cls, env_file: str | Path | None = None) -> Settings:
         _load_environment(env_file)
 
         api_id_raw = os.getenv("TG_API_ID", "").strip()

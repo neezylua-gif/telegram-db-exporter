@@ -5,9 +5,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tg_parser.db import ArchiveDatabase, SCHEMA_VERSION
-
 from helpers import chat_record, message_record
+
+from tg_parser.db import SCHEMA_VERSION, ArchiveDatabase
 
 
 class ArchiveDatabaseTests(unittest.IsolatedAsyncioTestCase):

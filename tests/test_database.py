@@ -1,7 +1,7 @@
 import asyncio
 from pathlib import Path
 
-from tg_parser.db import ArchiveDatabase, MESSAGE_COLUMNS
+from tg_parser.db import MESSAGE_COLUMNS, ArchiveDatabase
 
 
 def message(chat_id: int, message_id: int, text: str = "text"):

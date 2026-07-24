@@ -178,7 +178,7 @@ class ArchiveDatabase:
         self.connection: sqlite3.Connection | None = None
         self._lock = asyncio.Lock()
 
-    async def __aenter__(self) -> "ArchiveDatabase":
+    async def __aenter__(self) -> ArchiveDatabase:
         await self.open()
         return self
 

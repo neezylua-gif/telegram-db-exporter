@@ -4,9 +4,10 @@ import base64
 import json
 import re
 import unicodedata
+from collections.abc import Iterable
 from datetime import UTC, date, datetime
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 URL_RE = re.compile(r"https?://[^\s<>\]\[(){}\"']+", re.IGNORECASE)
 BAD_FILENAME_RE = re.compile(r"[<>:\"/\\|?*\x00-\x1f]")

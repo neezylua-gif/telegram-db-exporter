@@ -8,9 +8,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tg_parser.db import ArchiveDatabase
-
 from helpers import chat_record, message_record
+
+from tg_parser.db import ArchiveDatabase
 
 
 class CliTests(unittest.TestCase):

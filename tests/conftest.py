@@ -4,7 +4,6 @@ import importlib.util
 import sys
 import types
 
-
 if importlib.util.find_spec("telethon") is None:
     telethon = types.ModuleType("telethon")
     errors = types.ModuleType("telethon.errors")
