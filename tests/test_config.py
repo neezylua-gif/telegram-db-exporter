@@ -43,9 +43,11 @@ class ConfigTests(unittest.TestCase):
                 "TG_OUTPUT_DIR": temp,
                 "TG_MEDIA_WORKERS": "many",
             })
-            with patch.dict(os.environ, environment, clear=True):
-                with self.assertRaisesRegex(ValueError, "TG_MEDIA_WORKERS"):
-                    Settings.from_env(None)
+            with (
+    patch.dict(os.environ, environment, clear=True),
+    self.assertRaisesRegex(ValueError, "TG_MEDIA_WORKERS"),
+):
+    Settings.from_env(None)
 
     def test_session_directory_is_created(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
