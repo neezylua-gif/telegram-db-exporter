@@ -7,6 +7,7 @@ import os
 import sqlite3
 import tempfile
 from pathlib import Path
+from contextlib import suppress
 from typing import Any
 
 from .db import ArchiveDatabase
@@ -87,10 +88,8 @@ def _export_sync(
                     item = dict(row)
                     for key in ("reactions_json", "raw_json"):
                         if item.get(key):
-                            try:
-                                item[key] = json.loads(item[key])
-                            except json.JSONDecodeError:
-                                pass
+                            with suppress(json.JSONDecodeError):
+    item[key] = json.loads(item[key])
                     handle.write(json.dumps(item, ensure_ascii=False) + "\n")
                     count += 1
             else:
