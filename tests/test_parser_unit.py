@@ -8,24 +8,37 @@ from pathlib import Path
 from unittest.mock import patch
 
 from helpers import chat_record, message_record
+
 from tg_parser.config import Settings
 from tg_parser.db import ArchiveDatabase
 from tg_parser.parser import MediaJob, ParseOptions, TelegramArchiveParser
 
 
+def _write_test_file(path: str) -> str:
+    Path(path).write_bytes(b"data")
+    return path
+
+
+def _is_file(path: str) -> bool:
+    return Path(path).is_file()
+
+
+def _find_part_files(root: Path) -> list[Path]:
+    return list(root.rglob("*.part"))
+
+
 class DummyTelegramClient:
-    """Заглушка TelegramClient без создания файла сессии."""
+    """TelegramClient-заглушка, которая не создаёт файл сессии."""
 
     def __init__(self, *_args: object, **_kwargs: object) -> None:
         pass
 
 
 class DownloadingMessage:
-    """Заглушка Telegram-сообщения с загрузкой тестового файла."""
+    """Сообщение-заглушка, создающее небольшой тестовый файл."""
 
     async def download_media(self, *, file: str) -> str:
-        await asyncio.to_thread(Path(file).write_bytes, b"data")
-        return file
+        return await asyncio.to_thread(_write_test_file, file)
 
 
 class ParserUnitTests(unittest.IsolatedAsyncioTestCase):
@@ -69,8 +82,6 @@ class ParserUnitTests(unittest.IsolatedAsyncioTestCase):
                     ],
                 )
 
-                # Не даём парсеру создать настоящий Telethon-клиент
-                # и открыть SQLite-файл test.session.
                 with patch(
                     "tg_parser.parser.TelegramClient",
                     DummyTelegramClient,
@@ -103,7 +114,6 @@ class ParserUnitTests(unittest.IsolatedAsyncioTestCase):
                       AND message_id = 1
                     """
                 )
-
                 local_path = await database.fetch_scalar(
                     """
                     SELECT local_path
@@ -116,12 +126,8 @@ class ParserUnitTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(status, "downloaded")
                 self.assertIsInstance(local_path, str)
 
-                file_exists = await asyncio.to_thread(
-                    Path(local_path).is_file
-                )
-                part_files = await asyncio.to_thread(
-                    lambda: list(root.rglob("*.part"))
-                )
+                file_exists = await asyncio.to_thread(_is_file, local_path)
+                part_files = await asyncio.to_thread(_find_part_files, root)
 
                 self.assertTrue(file_exists)
                 self.assertEqual(part_files, [])
