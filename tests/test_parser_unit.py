@@ -9,9 +9,10 @@ from unittest.mock import patch
 
 from helpers import chat_record, message_record
 
+from tg_parser import parser as parser_module
 from tg_parser.config import Settings
 from tg_parser.db import ArchiveDatabase
-from tg_parser.parser import MediaJob, ParseOptions, TelegramArchiveParser
+from tg_parser.parser import MediaJob, ParseOptions
 
 
 def _write_test_file(path: str) -> str:
@@ -28,7 +29,7 @@ def _find_part_files(root: Path) -> list[Path]:
 
 
 class DummyTelegramClient:
-    """TelegramClient-заглушка, которая не создаёт файл сессии."""
+    """TelegramClient-заглушка, не создающая session-файлы."""
 
     def __init__(self, *_args: object, **_kwargs: object) -> None:
         pass
@@ -82,11 +83,14 @@ class ParserUnitTests(unittest.IsolatedAsyncioTestCase):
                     ],
                 )
 
-                with patch(
-                    "tg_parser.parser.TelegramClient",
+                # Важно: патчим TelegramClient непосредственно в модуле parser.
+                # Настоящий Telethon-клиент не создаётся и не блокирует test.session.
+                with patch.object(
+                    parser_module,
+                    "TelegramClient",
                     DummyTelegramClient,
                 ):
-                    parser = TelegramArchiveParser(
+                    parser = parser_module.TelegramArchiveParser(
                         settings,
                         database,
                         ParseOptions(),
