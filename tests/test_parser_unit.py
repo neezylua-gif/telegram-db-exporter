@@ -32,6 +32,9 @@ errors.RPCError = DummyRPCError
 errors.FloodWaitError = DummyFloodWaitError
 sys.modules["telethon"] = telethon
 sys.modules["telethon.errors"] = errors
+sys.modules.pop("tg_parser.parser", None)
+
+from helpers import chat_record, message_record
 
 from tg_parser.config import Settings
 from tg_parser.db import ArchiveDatabase
