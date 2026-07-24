@@ -43,7 +43,7 @@ class ConfigTests(unittest.TestCase):
                 "TG_OUTPUT_DIR": temp,
                 "TG_MEDIA_WORKERS": "many",
             })
-            with (
+           with (
     patch.dict(os.environ, environment, clear=True),
     self.assertRaisesRegex(ValueError, "TG_MEDIA_WORKERS"),
 ):
