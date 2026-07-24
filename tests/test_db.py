@@ -5,9 +5,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tg_parser.db import ArchiveDatabase, SCHEMA_VERSION
-
 from helpers import chat_record, message_record
+
+from tg_parser.db import SCHEMA_VERSION, ArchiveDatabase
 
 
 class ArchiveDatabaseTests(unittest.IsolatedAsyncioTestCase):
@@ -79,16 +79,18 @@ class ArchiveDatabaseTests(unittest.IsolatedAsyncioTestCase):
             await database.save_batch(
                 [message],
                 [],
-                [{
-                    "chat_id": -1001,
-                    "message_id": 1,
-                    "media_type": "document",
-                    "mime_type": "application/pdf",
-                    "original_name": "file.pdf",
-                    "remote_id": "123",
-                    "file_size": 10,
-                    "status": "pending",
-                }],
+                [
+                    {
+                        "chat_id": -1001,
+                        "message_id": 1,
+                        "media_type": "document",
+                        "mime_type": "application/pdf",
+                        "original_name": "file.pdf",
+                        "remote_id": "123",
+                        "file_size": 10,
+                        "status": "pending",
+                    }
+                ],
             )
             await database.update_media_result(
                 -1001,
@@ -113,16 +115,18 @@ class ArchiveDatabaseTests(unittest.IsolatedAsyncioTestCase):
             await first.save_batch(
                 [message],
                 [],
-                [{
-                    "chat_id": -1001,
-                    "message_id": 1,
-                    "media_type": "document",
-                    "mime_type": "application/pdf",
-                    "original_name": "file.pdf",
-                    "remote_id": "123",
-                    "file_size": 10,
-                    "status": "pending",
-                }],
+                [
+                    {
+                        "chat_id": -1001,
+                        "message_id": 1,
+                        "media_type": "document",
+                        "mime_type": "application/pdf",
+                        "original_name": "file.pdf",
+                        "remote_id": "123",
+                        "file_size": 10,
+                        "status": "pending",
+                    }
+                ],
             )
             self.assertTrue(await first.claim_media_download(-1001, 1))
             await second.open()
@@ -143,16 +147,18 @@ class ArchiveDatabaseTests(unittest.IsolatedAsyncioTestCase):
             await first.save_batch(
                 [message],
                 [],
-                [{
-                    "chat_id": -1001,
-                    "message_id": 1,
-                    "media_type": "document",
-                    "mime_type": "application/pdf",
-                    "original_name": "file.pdf",
-                    "remote_id": "123",
-                    "file_size": 10,
-                    "status": "pending",
-                }],
+                [
+                    {
+                        "chat_id": -1001,
+                        "message_id": 1,
+                        "media_type": "document",
+                        "mime_type": "application/pdf",
+                        "original_name": "file.pdf",
+                        "remote_id": "123",
+                        "file_size": 10,
+                        "status": "pending",
+                    }
+                ],
             )
             await first.update_media_result(
                 -1001,
